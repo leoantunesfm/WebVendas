@@ -50,12 +50,10 @@ namespace FillGaps.WebVendas.WebApp.DAL
                 .WithMany(c => c.Produtos)
                 .HasForeignKey(p => p.IdCategoria);
 
-            //modelBuilder.Entity<Entities.Cliente>().ToTable("CLIENTE");
-            //modelBuilder.Entity<Entities.Documento>().ToTable("DOCUMENTO");
-            //modelBuilder.Entity<Entities.DocumentoItem>().ToTable("DOCUMENTO_ITEM");
-            //modelBuilder.Entity<Entities.Produto>().ToTable("PRODUTO");
-            //modelBuilder.Entity<Entities.Categoria>().ToTable("CATEGORIA");
-            //modelBuilder.Entity<Entities.Usuario>().ToTable("USUARIO");
+            modelBuilder.Entity<Entities.Usuario>()
+                .HasAlternateKey(u => u.LoginUsuario);
+            modelBuilder.Entity<Entities.Usuario>()
+                .HasAlternateKey(u => u.EmailUsuario);
         }
     }
 }
