@@ -15,5 +15,6 @@ namespace FillGaps.WebVendas.WebApp.Entities
         public int IdCliente { get; set; }
         public decimal ValorTotalDocumento { get; set; }
         public Cliente Cliente { get; set; }
+        public ICollection<DocumentoItem> DocumentoItens { get; set; }
     }
 }
