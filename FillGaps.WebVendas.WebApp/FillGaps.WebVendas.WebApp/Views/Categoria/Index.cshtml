@@ -1,5 +1,53 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using FillGaps.WebVendas.WebApp.Entities
+
 @{
+	ViewData["Title"] = "Categorias";
 }
+
+@model List<Categoria>;
+
+<h2>Categorias</h2>
+<hr />
+
+<p>
+	<a asp-controller="Categoria" asp-action="Cadastro" class="btn btn-block btn-primary">Cadastrar categoria</a>
+</p>
+
+<table class="table table-bordered">
+	<thead>
+		<tr style="background-color:#f6f6f6">
+			<th>Código</th>
+			<th>Nome</th>
+			<th>Ações</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var categoria in Model)
+		{
+			<tr>
+				<td onclick="Editar(@categoria.IdCategoria)" style="cursor:pointer">@categoria.CodigoCategoria</td>
+				<td onclick="Editar(@categoria.IdCategoria)" style="cursor:pointer">@categoria.NomeCategoria</td>
+				<td>
+					<a asp-controller="Categoria" asp-action="Cadastro" asp-route-id="@categoria.IdCategoria" class="btn btn-warning">Editar</a>
+					<a asp-controller="Categoria" asp-action="Excluir" asp-route-id="@categoria.IdCategoria" class="btn btn-danger">Excluir</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<br />
+<button type="button" class="btn btn-block btn-info" onclick="Cadastrar()">Cadastrar categoria</button>
+<br />
+<br />
+<button type="button" class="btn btn-block btn-secondary" onclick="Cadastrar2()">Cadastrar categoria</button>
+<script>
+	function Editar(IdCategoria){
+		window.location.href = '@Url.Action("Cadastro", "Categoria")' + '/' + IdCategoria;
+	}
+	function Cadastrar() {
+		window.location.href = '@Url.Action("Cadastro", "Categoria")';
+	}
+	function Cadastrar2() {
+		window.location = window.origin + "\\Categoria\\Cadastro";
+	}
+</script>

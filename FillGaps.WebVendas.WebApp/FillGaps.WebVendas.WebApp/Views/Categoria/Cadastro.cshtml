@@ -1,5 +1,60 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using FillGaps.WebVendas.WebApp.Models
+
 @{
+	ViewData["Title"] = "Categoria";
 }
+
+@model CategoriaViewModel;
+
+@{
+	var hidden = Model.IdCategoria == null ? "hidden" : string.Empty;
+}
+
+<h2>Cadastro de Categoria</h2>
+<hr />
+<p>
+	<a asp-controller="Categoria" asp-action="Index" class="btn btn-block btn-primary">Listar categorias</a>
+</p>
+
+<div class="alert alert-info">
+	<p>Preencha os campos abaixo para cadastrar uma nova categoria.</p>
+
+	<form asp-controller="Categoria" asp-action="Cadastro" method="post">
+		<input type="hidden" asp-for="IdCategoria" value="@Model.IdCategoria" />
+
+		<div class="form-group">
+			<div class="col-4">
+				<label>Código da categoria</label>
+				<input asp-for="CodigoCategoria" type="text" value="@Model.CodigoCategoria" class="form-control" placeholder="Entre com o código da categoria" />
+				<span asp-validation-for="CodigoCategoria" class="text-danger"></span>
+			</div>
+			<br />
+			<div class="col-12">
+				<label asp-for="NomeCategoria" class="control-label">Nome da categoria</label>
+				<input asp-for="NomeCategoria" type="text" value="@Model.NomeCategoria" class="form-control" placeholder="Entre com o nome da categoria" />
+				<span asp-validation-for="NomeCategoria" class="text-danger"></span>
+			</div>
+			<br />
+			<div class="col">
+				<button type="button" class="btn btn-info" onclick="Novo()">Novo</button>
+				<button type="submit" class="btn btn-success">Salvar</button>
+				<button type="button" class="btn btn-secondary" onclick="ListarTodos()">Lista</button>
+				<button type="button" class="btn btn-danger" onclick="Excluir(@Model.IdCategoria)" @hidden>Excluir</button>
+				<a asp-controller="Categoria" asp-action="Index" class="btn btn-dark">Voltar</a>
+			</div>
+		</div>
+	</form>
+
+	<script>
+		function Novo() {
+			window.location = window.origin + "\\Categoria\\Cadastro";
+		}
+		function ListarTodos() {
+			window.location = window.origin + "\\Categoria";
+		}
+		function Excluir(IdCategoria) {
+			if (confirm('Deseja realmente excluir?')) {
+				window.location.href = '@Url.Action("Excluir", "Categoria")' + '/' + IdCategoria;
+			}
+		}
+	</script>

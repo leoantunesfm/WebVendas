@@ -8,7 +8,7 @@ namespace FillGaps.WebVendas.WebApp.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IdCliente { get; set; }
+        public int? IdCliente { get; set; }
         public string CodigoCliente { get; set; }
         public string NomeCliente { get; set; }
         public string CPF_CNPJ { get; set; }

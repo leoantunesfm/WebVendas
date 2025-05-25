@@ -6,7 +6,7 @@ namespace FillGaps.WebVendas.WebApp.Entities
     public class DocumentoItem
     {
         [ForeignKey("DOCUMENTO")]
-        public int IdDocumento { get; set; }
+        public int? IdDocumento { get; set; }
         [ForeignKey("PRODUTO")]
         public int IdProduto { get; set; }
         public decimal QuantidadeProduto { get; set; }

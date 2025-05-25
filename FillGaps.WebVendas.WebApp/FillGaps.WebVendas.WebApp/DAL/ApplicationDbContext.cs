@@ -40,8 +40,8 @@ namespace FillGaps.WebVendas.WebApp.DAL
             modelBuilder.Entity<Entities.Cliente>()
                 .HasAlternateKey(c => c.CodigoCliente);
 
-            modelBuilder.Entity<Entities.Categoria>()
-                .HasAlternateKey(c => c.CodigoCategoria);
+            //modelBuilder.Entity<Entities.Categoria>()
+            //    .HasAlternateKey(c => c.CodigoCategoria);
 
             modelBuilder.Entity<Entities.Produto>()
                 .HasAlternateKey(p => p.CodigoProduto);
