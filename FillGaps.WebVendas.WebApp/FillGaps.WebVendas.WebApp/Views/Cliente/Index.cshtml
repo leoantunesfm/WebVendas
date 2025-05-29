@@ -1,5 +1,46 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using FillGaps.WebVendas.WebApp.Entities
+
 @{
+	ViewData["Title"] = "Clientes";
 }
+
+@model List<Cliente>;
+
+<h2>Clientes</h2>
+<hr />
+<p>
+	<button type="button" class="btn btn-secondary w-100" onclick="Cadastrar()">Cadastrar novo cliente</button>
+</p>
+
+<table class="table table-bordered">
+	<thead>
+		<tr style="background-color:#f6f6f6">
+			<th>Código</th>
+			<th>Nome</th>
+			<th>CPF / CNPJ</th>
+			<th>E-mail</th>
+			<th>Telefone</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var cliente in Model)
+		{
+			<tr>
+				<td onclick="Editar(@cliente.IdCliente)" style="cursor:pointer">@cliente.CodigoCliente</td>
+				<td onclick="Editar(@cliente.IdCliente)" style="cursor:pointer">@cliente.NomeCliente</td>
+				<td onclick="Editar(@cliente.IdCliente)" style="cursor:pointer">@cliente.CPF_CNPJ</td>
+				<td onclick="Editar(@cliente.IdCliente)" style="cursor:pointer">@cliente.EmailCliente</td>
+				<td onclick="Editar(@cliente.IdCliente)" style="cursor:pointer">@cliente.TelefoneCliente</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<script>
+	function Editar(IdCategoria){
+		window.location.href = '@Url.Action("Cadastro", "Cliente")' + '/' + IdCategoria;
+	}
+	function Cadastrar() {
+		window.location.href = '@Url.Action("Cadastro", "Cliente")';
+	}
+</script>

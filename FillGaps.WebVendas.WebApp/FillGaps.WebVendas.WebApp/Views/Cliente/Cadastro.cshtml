@@ -1,5 +1,73 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+	ViewData["Title"] = "Categoria";
 }
+
+@model ClienteViewModel;
+
+@{
+	var hidden = Model.IdCliente == null ? "hidden" : string.Empty;
+}
+
+<h2>Cadastro de Cliente</h2>
+<hr />
+<p>
+	<a asp-controller="Cliente" asp-action="Index" class="btn btn-dark">Voltar</a>
+</p>
+
+<div class="alert alert-info">
+	<p>Preencha os campos abaixo para cadastrar um novo cliente.</p>
+
+	<form asp-controller="Cliente" asp-action="Cadastro" method="post">
+		<input type="hidden" asp-for="IdCliente" value="@Model.IdCliente" />
+
+		<div class="form-group">
+			<div class="col-3">
+				<label>Código do cliente</label>
+				<input asp-for="CodigoCliente" type="text" value="@Model.CodigoCliente" class="form-control" placeholder="Entre com o código do cliente" />
+				<span asp-validation-for="CodigoCliente" class="text-danger"></span>
+			</div>
+			<div class="col-8">
+				<label asp-for="NomeCliente" class="control-label">Nome</label>
+				<input asp-for="NomeCliente" type="text" value="@Model.NomeCliente" class="form-control" placeholder="Entre com o nome do cliente" />
+				<span asp-validation-for="NomeCliente" class="text-danger"></span>
+			</div>
+			<div class="col-3">
+				<label asp-for="CPF_CNPJ" class="control-label">CPF / CNPJ</label>
+				<input asp-for="CPF_CNPJ" type="text" value="@Model.CPF_CNPJ" class="form-control" placeholder="Entre com o CPF ou CNPJ do cliente" />
+				<span asp-validation-for="CPF_CNPJ" class="text-danger"></span>
+			</div>
+			<div class="col-4">
+				<label asp-for="EmailCliente" class="control-label">E-mail</label>
+				<input asp-for="EmailCliente" type="text" value="@Model.EmailCliente" class="form-control" placeholder="Entre com o e-mail do cliente" />
+				<span asp-validation-for="EmailCliente" class="text-danger"></span>
+			</div>
+			<div class="col-4">
+				<label asp-for="TelefoneCliente" class="control-label">Telefone</label>
+				<input asp-for="TelefoneCliente" type="text" value="@Model.TelefoneCliente" class="form-control" placeholder="Entre com o telefone do cliente" />
+				<span asp-validation-for="TelefoneCliente" class="text-danger"></span>
+			</div>
+			<br />
+			<div class="col">
+				<button type="button" class="btn btn-info" onclick="Novo()">Novo</button>
+				<button type="submit" class="btn btn-success">Salvar</button>
+				<button type="button" class="btn btn-danger" onclick="Excluir(@Model.IdCliente)" @hidden>Excluir</button>
+				<button type="button" class="btn btn-secondary" onclick="ListarTodos()">Lista de clientes</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+	<script>
+		function Novo() {
+			window.location = window.origin + "\\Cliente\\Cadastro";
+		}
+		function ListarTodos() {
+			window.location = window.origin + "\\Cliente";
+		}
+		function Excluir(IdCliente) {
+			if (confirm('Deseja realmente excluir?')) {
+				window.location.href = '@Url.Action("Excluir", "Cliente")' + '/' + IdCliente;
+			}
+		}
+	</script>
