@@ -1,5 +1,46 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using FillGaps.WebVendas.WebApp.Entities
+
 @{
+	ViewData["Title"] = "Produtos";
 }
+
+@model List<Produto>;
+
+<h2>Produtos</h2>
+<hr />
+<p>
+	<button type="button" class="btn btn-secondary w-100" onclick="Cadastrar()">Cadastrar novo produto</button>
+</p>
+
+<table class="table table-bordered">
+	<thead>
+		<tr style="background-color:#f6f6f6">
+			<th>Código</th>
+			<th>Descrição</th>
+			<th>Qt. Estoque</th>
+			<th>Preço de venda</th>
+			<th>Categoria</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var produto in Model)
+		{
+			<tr>
+				<td onclick="Editar(@produto.IdProduto)" style="cursor:pointer">@produto.CodigoProduto</td>
+				<td onclick="Editar(@produto.IdProduto)" style="cursor:pointer">@produto.DescricaoProduto</td>
+				<td onclick="Editar(@produto.IdProduto)" style="cursor:pointer">@produto.QuantidadeProduto</td>
+				<td onclick="Editar(@produto.IdProduto)" style="cursor:pointer">@produto.PrecoProduto</td>
+				<td onclick="Editar(@produto.IdProduto)" style="cursor:pointer">@($"{produto.Categoria.CodigoCategoria} - {produto.Categoria.NomeCategoria}")</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<script>
+	function Editar(IdProduto){
+		window.location.href = '@Url.Action("Cadastro", "Produto")' + '/' + IdProduto;
+	}
+	function Cadastrar() {
+		window.location.href = '@Url.Action("Cadastro", "Produto")';
+	}
+</script>

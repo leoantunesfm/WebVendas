@@ -1,5 +1,73 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+	ViewData["Title"] = "Produto";
 }
+
+@model ProdutoViewModel;
+
+@{
+	var hidden = Model.IdProduto == null ? "hidden" : string.Empty;
+}
+
+<h2>Cadastro de Produto</h2>
+<hr />
+<p>
+	<a asp-controller="Produto" asp-action="Index" class="btn btn-dark">Voltar</a>
+</p>
+
+<div class="alert alert-info">
+	<p>Preencha os campos abaixo para cadastrar um novo produto.</p>
+
+	<form asp-controller="Produto" asp-action="Cadastro" method="post">
+		<input type="hidden" asp-for="IdProduto" value="@Model.IdProduto" />
+
+		<div class="form-group">
+			<div class="col-3">
+				<label>Código do produto</label>
+				<input asp-for="CodigoProduto" type="text" value="@Model.CodigoProduto" class="form-control" placeholder="Entre com o código do produto" />
+				<span asp-validation-for="CodigoProduto" class="text-danger"></span>
+			</div>
+			<div class="col-8">
+				<label asp-for="DescricaoProduto" class="control-label">Descrição</label>
+				<input asp-for="DescricaoProduto" type="text" value="@Model.DescricaoProduto" class="form-control" placeholder="Entre com a descrição do produto" />
+				<span asp-validation-for="DescricaoProduto" class="text-danger"></span>
+			</div>
+			<div class="col-4">
+				<label asp-for="QuantidadeProduto" class="control-label">Qt. em estoque</label>
+				<input asp-for="QuantidadeProduto" type="number" step="0.001" value="@Model.QuantidadeProduto" class="form-control" placeholder="Entre com a quantidade em estoque do produto" />
+				<span asp-validation-for="QuantidadeProduto" class="text-danger"></span>
+			</div>
+			<div class="col-4">
+				<label asp-for="PrecoProduto" class="control-label">Preço de venda</label>
+				<input asp-for="PrecoProduto" type="number" step="0.01" value="@Model.PrecoProduto" class="form-control" placeholder="Entre com o preço do produto" />
+				<span asp-validation-for="PrecoProduto" class="text-danger"></span>
+			</div>
+			<div class="col-4">
+				<label asp-for="IdCategoria" class="control-label">Categoria</label>
+				<select asp-for="IdCategoria" class="form-control input-group-lg" asp-items="@Model.ListaCategorias"></select>
+				<span asp-validation-for="IdCategoria" class="text-danger"></span>
+			</div>
+			<br />
+			<div class="col">
+				<button type="button" class="btn btn-info" onclick="Novo()">Novo</button>
+				<button type="submit" class="btn btn-success">Salvar</button>
+				<button type="button" class="btn btn-danger" onclick="Excluir(@Model.IdProduto)" @hidden>Excluir</button>
+				<button type="button" class="btn btn-secondary" onclick="ListarTodos()">Lista de produtos</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+<script>
+	function Novo() {
+		window.location = window.origin + "\\Produto\\Cadastro";
+	}
+	function ListarTodos() {
+		window.location = window.origin + "\\Produto";
+	}
+	function Excluir(IdProduto) {
+		if (confirm('Deseja realmente excluir?')) {
+			window.location.href = '@Url.Action("Excluir", "Produto")' + '/' + IdProduto;
+		}
+	}
+</script>
