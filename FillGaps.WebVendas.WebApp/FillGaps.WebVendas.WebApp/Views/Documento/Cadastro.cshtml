@@ -1,5 +1,143 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Documento";
 }
+
+@model DocumentoViewModel;
+
+@{
+    var hidden = Model.IdDocumento == null ? "hidden" : string.Empty;
+}
+
+<h2>Documento de venda</h2>
+<hr />
+<p>
+    <a asp-controller="Documento" asp-action="Index" class="btn btn-dark">Voltar</a>
+</p>
+
+<div class="alert alert-info">
+    <form asp-controller="Documento" asp-action="Cadastro" method="post">
+        <input type="hidden" asp-for="IdDocumento" value="@Model.IdDocumento" />
+
+        <div class="form-group">
+            <div class="form-group d-flex align-items-end">
+                <div style="width: 400px;">
+                    <label asp-for="NumeroDocumento" class="control-label">Número do documento</label>
+                    <span class="form-control-plaintext">@Model.NumeroDocumento</span>
+                </div>
+                <div style="width: 180px; margin-left: 10px;">
+                    <label asp-for="ValorTotalDocumento" class="control-label">Valor total</label>
+                    <input id="txtValorTotal" asp-for="ValorTotalDocumento" type="text" class="form-control" disabled 
+                    value="@Model.ValorTotalDocumento.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))" 
+                    placeholder="Valor total do documento" />
+                    <span asp-validation-for="ValorTotalDocumento" class="text-danger"></span>
+                </div>
+            </div>
+            <br />
+            <div class="col-4">
+                <label asp-for="DataDocumento" class="control-label">Data da venda</label>
+                <input asp-for="DataDocumento" type="date" value="@Model.DataDocumento" class="form-control" placeholder="Entre com a data da venda" />
+                <span asp-validation-for="DataDocumento" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <label asp-for="IdCliente" class="control-label">Cliente</label>
+                <select asp-for="IdCliente" class="form-control" input-lg asp-items="@Model.ListaClientes"></select>
+                <span asp-validation-for="IdCliente" class="text-danger"></span>
+            </div>
+
+
+
+            <div class="form-group d-flex align-items-end">
+                <div style="width: 400px;">
+                    <label class="control-label">Itens</label>
+                    <select id="ddlProdutos" onchange="ObterPrecoProduto()" class="form-control" input-lg asp-items="@Model.ListaProdutos"></select>
+                </div>
+                <div style="width: 180px; margin-left: 10px;">
+                    <label class="control-label">Preço unitário</label>
+                    <input id="txtPrecoUnitario" type="text" class="form-control" disabled />
+                </div>
+                <div style="width: 180px; margin-left: 10px;">
+                    <label class="control-label">Quantidade</label>
+                    <input id="txtQuantidade" type="number" class="form-control" onchange="CalcularTotalItem()" />
+                </div>
+                <div style="width: 180px; margin-left: 10px;">
+                    <label class="control-label">Total Item</label>
+                    <input id="txtTotalItem" type="text" class="form-control" disabled />
+                </div>
+                <div style="width: 180px; margin-left: 10px;">
+                    <button type="button" class="btn btn-primary" onclick="AdicionarItem()">Adicionar</button>
+                </div>
+            </div>
+            <br />
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <table class="table table-bordered">
+                        <thead class="thead-inverse">
+                            <tr style="background-color:#f6f6f6">
+                                <th style="width: 10%;">Código</th>
+                                <th style="width: 40%;">Produto</th>
+                                <th style="width: 15%;">Quantidade</th>
+                                <th style="width: 15%;">Preço Unitário</th>
+                                <th style="width: 15%;">Total Item</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gridProdutos">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <br />
+            <div class="col">
+                <button type="button" class="btn btn-info" onclick="Novo()">Novo</button>
+                <button type="submit" class="btn btn-success">Salvar</button>
+                <button type="button" class="btn btn-danger" onclick="Excluir(@Model.IdDocumento)" @hidden>Excluir</button>
+                <button type="button" class="btn btn-secondary" onclick="ListarTodos()">Lista de Documentos</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    function ObterPrecoProduto() {
+        var idProduto = document.getElementById("ddlProdutos").value;
+        var url = `/ObterPrecoProduto/${idProduto}`;
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                document.getElementById("txtPrecoUnitario").value = Number(xhr.responseText).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+        };
+        xhr.open("GET", url, false);
+        xhr.send(null);
+    }
+
+    function CalcularTotalItem() {
+        var precoUnitario = parseFloat(document.getElementById("txtPrecoUnitario").value.replace(',', '.'));
+        var quantidade = parseFloat(document.getElementById("txtQuantidade").value);
+        if (!isNaN(precoUnitario) && !isNaN(quantidade)) {
+            var totalItem = precoUnitario * quantidade;
+            document.getElementById("txtTotalItem").value = totalItem.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        } else {
+            document.getElementById("txtTotalItem").value = '0,00';
+        }
+    }
+
+    function AdicionarItem(){
+    
+    }
+
+    function Novo() {
+        window.location = window.origin + "\\Documento\\Cadastro";
+    }
+    function ListarTodos() {
+        window.location = window.origin + "\\Documento";
+    }
+    function Excluir(IdDocumento) {
+        if (confirm('Deseja realmente excluir?')) {
+            window.location.href = '@Url.Action("Excluir", "Documento")' + '/' + IdDocumento;
+        }
+    }
+</script>

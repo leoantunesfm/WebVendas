@@ -1,5 +1,46 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using FillGaps.WebVendas.WebApp.Entities
+@using System.Globalization
+
 @{
+	ViewData["Title"] = "Documentos";
 }
+
+@model List<Documento>;
+
+<h2>Documentos de venda</h2>
+<hr />
+<p>
+	<button type="button" class="btn btn-secondary w-100" onclick="Cadastrar()">Cadastrar nova venda</button>
+</p>
+
+<table class="table table-bordered">
+	<thead>
+		<tr style="background-color:#f6f6f6">
+			<th style="width: 10%;">Número</th>
+			<th style="width: 15%;">Data</th>
+			<th style="width: 45%;">Cliente</th>
+			<th style="width: 20%;">Valor Total</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var documento in Model)
+		{
+			<tr>
+				<td onclick="Editar(@documento.IdDocumento)" style="cursor:pointer">@documento.NumeroDocumento</td>
+				<td onclick="Editar(@documento.IdDocumento)" style="cursor:pointer">@documento.DataDocumento.ToString("dd/MM/yyyy")</td>
+				<td onclick="Editar(@documento.IdDocumento)" style="cursor:pointer">@($"{documento.Cliente.CodigoCliente} - {documento.Cliente.NomeCliente}")</td>
+				<td onclick="Editar(@documento.IdDocumento)" style="cursor:pointer">
+					@documento.ValorTotalDocumento.ToString("N2", new CultureInfo("pt-BR"))</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<script>
+	function Editar(IdDocumento){
+		window.location.href = '@Url.Action("Cadastro", "Documento")' + '/' + IdDocumento;
+	}
+	function Cadastrar() {
+		window.location.href = '@Url.Action("Cadastro", "Documento")';
+	}
+</script>
