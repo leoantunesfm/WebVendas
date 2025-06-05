@@ -26,16 +26,15 @@
                 </div>
                 <div style="width: 180px; margin-left: 10px;">
                     <label asp-for="ValorTotalDocumento" class="control-label">Valor total</label>
-                    <input id="txtValorTotal" asp-for="ValorTotalDocumento" type="text" class="form-control" disabled 
-                    value="@Model.ValorTotalDocumento.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))" 
-                    placeholder="Valor total do documento" />
+                    <input id="txtValorTotal" asp-for="ValorTotalDocumento" type="text" class="form-control" 
+                    value="@Model.ValorTotalDocumento.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))" />
                     <span asp-validation-for="ValorTotalDocumento" class="text-danger"></span>
                 </div>
             </div>
             <br />
             <div class="col-4">
                 <label asp-for="DataDocumento" class="control-label">Data da venda</label>
-                <input asp-for="DataDocumento" type="date" value="@Model.DataDocumento" class="form-control" placeholder="Entre com a data da venda" />
+                <input asp-for="DataDocumento" type="date" value="@Model.DataDocumento" class="form-control" />
                 <span asp-validation-for="DataDocumento" class="text-danger"></span>
             </div>
             <div class="col-6">
@@ -74,19 +73,20 @@
                     <table class="table table-bordered">
                         <thead class="thead-inverse">
                             <tr style="background-color:#f6f6f6">
-                                <th style="width: 10%;">Código</th>
-                                <th style="width: 40%;">Produto</th>
+                                <th style="width: 50%;">Produto</th>
                                 <th style="width: 15%;">Quantidade</th>
                                 <th style="width: 15%;">Preço Unitário</th>
                                 <th style="width: 15%;">Total Item</th>
                             </tr>
                         </thead>
-                        <tbody id="gridProdutos">
+                        <tbody id="gridItens">
 
                         </tbody>
                     </table>
                 </div>
             </div>
+
+            <textarea asp-for="JsonProdutos" id="txtJsonProdutos" class="col w-100" style="display:none"></textarea>
 
             <br />
             <div class="col">
@@ -125,8 +125,45 @@
         }
     }
 
+    var Itens = new Object();
+    Itens.Produtos = new Array();
+    var gridItens = document.getElementById("gridItens");   
+
     function AdicionarItem(){
-    
+        var Produto = document.getElementById("ddlProdutos");
+        var QuantidadeProduto = document.getElementById("txtQuantidade").value;
+        var ValorUnitarioItem = document.getElementById("txtPrecoUnitario").value.replace(',', '.');
+        var ValorTotalItem = document.getElementById("txtTotalItem").value.replace(',', '.');
+
+        Itens.Produtos.push({
+            "IdProduto": Produto.value,
+            "QuantidadeProduto": QuantidadeProduto,
+            "ValorUnitarioItem": ValorUnitarioItem,
+            "ValorTotalItem": ValorTotalItem
+        });
+
+        document.getElementById("txtJsonProdutos").value = JSON.stringify(Itens.Produtos);
+
+        var LinhaGrid =
+        "<tr idProduto ='" + Produto.value + "'>" +
+        "<td>" + Produto.options[Produto.selectedIndex].text + "</td>" +
+        "<td>" + QuantidadeProduto + "</td>" +
+        "<td>" + Number(ValorUnitarioItem).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "</td>" +
+        "<td>" + Number(ValorTotalItem).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "</td>" +
+        "</tr>";
+
+        gridItens.innerHTML += LinhaGrid;
+
+        var ValorTotalDocumento = Number(document.getElementById("txtValorTotal").value.replace(',', '.')) +
+                                  Number(ValorTotalItem);
+        
+        document.getElementById("txtValorTotal").value = ValorTotalDocumento.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        document.getElementById("txtQuantidade").value = '';
+        document.getElementById("txtPrecoUnitario").value = '';
+        document.getElementById("txtTotalItem").value = '';
+        document.getElementById("ddlProdutos").selectedIndex = -1;
+        
     }
 
     function Novo() {

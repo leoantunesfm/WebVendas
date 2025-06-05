@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Documento";
+}
+
+@model DocumentoConsultaViewModel;
+
+@{
+    var hidden = Model.IdDocumento == null ? "hidden" : string.Empty;
+}
+
+<h2>Documento de venda</h2>
+<hr />
+<p>
+    <a asp-controller="Documento" asp-action="Index" class="btn btn-dark">Voltar</a>
+</p>
+
+<div class="alert alert-info">
+    <form asp-controller="Documento" asp-action="Cadastro" method="post">
+        <input type="hidden" asp-for="IdDocumento" value="@Model.IdDocumento" />
+
+        <div class="form-group">
+            <div class="form-group d-flex align-items-end">
+                <div style="width: 400px;">
+                    <label asp-for="NumeroDocumento" class="control-label">Número do documento</label>
+                    <span class="form-control-plaintext">@Model.NumeroDocumento</span>
+                </div>
+                <div style="width: 180px; margin-left: 10px;">
+                    <label asp-for="ValorTotalDocumento" class="control-label">Valor total</label>
+                    <input asp-for="ValorTotalDocumento" type="text" class="form-control" disabled
+                           value="@Model.ValorTotalDocumento.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))" />
+                </div>
+            </div>
+            <br />
+            <div class="col-4">
+                <label asp-for="DataDocumento" class="control-label">Data da venda</label>
+                <span class="form-control-plaintext">@Model.DataDocumento.ToString("dd/MM/yyyy")</span>
+            </div>
+            <div class="col-6">
+                <label asp-for="Cliente" class="control-label">Cliente</label>
+                <span class="form-control-plaintext">@($" {Model.Cliente.CodigoCliente} - {Model.Cliente.NomeCliente}")</span>
+            </div>
+
+            <br />
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <table class="table table-bordered">
+                        <thead class="thead-inverse">
+                            <tr style="background-color:#f6f6f6">
+                                <th style="width: 50%;">Produto</th>
+                                <th style="width: 15%;">Quantidade</th>
+                                <th style="width: 15%;">Preço Unitário</th>
+                                <th style="width: 15%;">Total Item</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gridItens">
+                            @if (Model.Itens != null && Model.Itens.Any())
+                            {
+                                foreach (var item in Model.Itens)
+                                {
+                                    <tr>
+                                        <td>@($"{item.Produto.CodigoProduto} - {item.Produto.DescricaoProduto}")</td>
+                                        <td>@item.QuantidadeProduto</td>
+                                        <td>@item.ValorUnitarioItem.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</td>
+                                        <td>@item.ValorTotalItem.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">Nenhum item adicionado.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <br />
+            <div class="col">
+                <button type="button" class="btn btn-info" onclick="Novo()">Novo</button>
+                <button type="button" class="btn btn-danger" onclick="Excluir(@Model.IdDocumento)" @hidden>Excluir</button>
+                <button type="button" class="btn btn-secondary" onclick="ListarTodos()">Lista de Documentos</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+        
+    function Novo() {
+        window.location = window.origin + "\\Documento\\Cadastro";
+    }
+
+    function ListarTodos() {
+        window.location = window.origin + "\\Documento";
+    }
+
+    function Excluir(IdDocumento) {
+        if (confirm('Deseja realmente excluir?')) {
+            window.location.href = '@Url.Action("Excluir", "Documento")' + '/' + IdDocumento;
+        }
+    }
+
+</script>

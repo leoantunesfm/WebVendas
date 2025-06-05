@@ -26,10 +26,10 @@
 		@foreach (var documento in Model)
 		{
 			<tr>
-				<td onclick="Editar(@documento.IdDocumento)" style="cursor:pointer">@documento.NumeroDocumento</td>
-				<td onclick="Editar(@documento.IdDocumento)" style="cursor:pointer">@documento.DataDocumento.ToString("dd/MM/yyyy")</td>
-				<td onclick="Editar(@documento.IdDocumento)" style="cursor:pointer">@($"{documento.Cliente.CodigoCliente} - {documento.Cliente.NomeCliente}")</td>
-				<td onclick="Editar(@documento.IdDocumento)" style="cursor:pointer">
+				<td onclick="Consultar(@documento.IdDocumento)" style="cursor:pointer">@documento.NumeroDocumento</td>
+				<td onclick="Consultar(@documento.IdDocumento)" style="cursor:pointer">@documento.DataDocumento.ToString("dd/MM/yyyy")</td>
+				<td onclick="Consultar(@documento.IdDocumento)" style="cursor:pointer">@($"{documento.Cliente.CodigoCliente} - {documento.Cliente.NomeCliente}")</td>
+				<td onclick="Consultar(@documento.IdDocumento)" style="cursor:pointer">
 					@documento.ValorTotalDocumento.ToString("N2", new CultureInfo("pt-BR"))</td>
 			</tr>
 		}
@@ -37,8 +37,8 @@
 </table>
 
 <script>
-	function Editar(IdDocumento){
-		window.location.href = '@Url.Action("Cadastro", "Documento")' + '/' + IdDocumento;
+	function Consultar(IdDocumento){
+		window.location.href = '@Url.Action("Consulta", "Documento")' + '/' + IdDocumento;
 	}
 	function Cadastrar() {
 		window.location.href = '@Url.Action("Cadastro", "Documento")';

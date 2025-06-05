@@ -4,6 +4,7 @@ using FillGaps.WebVendas.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace FillGaps.WebVendas.WebApp.Controllers
 {
@@ -29,7 +30,7 @@ namespace FillGaps.WebVendas.WebApp.Controllers
         {
             List<SelectListItem> listaClientes = new List<SelectListItem>();
 
-            listaClientes.Add(new SelectListItem { Value = "0", Text = "Selecione um Cliente" });
+            listaClientes.Add(new SelectListItem { Value = string.Empty, Text = string.Empty });
 
             foreach (var cliente in _context.Cliente.ToList())
             {
@@ -47,7 +48,7 @@ namespace FillGaps.WebVendas.WebApp.Controllers
         {
             List<SelectListItem> listaProdutos = new List<SelectListItem>();
 
-            listaProdutos.Add(new SelectListItem { Value = "0", Text = "Selecione um produto" });
+            listaProdutos.Add(new SelectListItem { Value = string.Empty, Text = string.Empty });
 
             foreach (var produto in _context.Produto.ToList())
             {
@@ -85,6 +86,68 @@ namespace FillGaps.WebVendas.WebApp.Controllers
             return View(documentoViewModel);
         }
 
+        [HttpGet]
+        public IActionResult Consulta(int? id)
+        {
+            DocumentoConsultaViewModel documentoConsultaViewModel = new DocumentoConsultaViewModel();
+
+            if (id != null)
+            {
+                Documento? documento = _context.Documento
+                                        .Include(c => c.Cliente)
+                                        .Include(i => i.DocumentoItens)
+                                        .ThenInclude(p => p.Produto)
+                                        .FirstOrDefault(d => d.IdDocumento == id);
+                                        
+                if (documento != null)
+                {
+                    documentoConsultaViewModel.IdDocumento = (int)id;
+                    documentoConsultaViewModel.NumeroDocumento = documento.NumeroDocumento;
+                    documentoConsultaViewModel.DataDocumento = documento.DataDocumento;
+                    documentoConsultaViewModel.ValorTotalDocumento = documento.ValorTotalDocumento;
+
+                    Cliente? cliente = documento.Cliente;
+
+                    if (cliente != null)
+                    {
+                        documentoConsultaViewModel.Cliente.IdCliente = cliente.IdCliente;
+                        documentoConsultaViewModel.Cliente.CodigoCliente = cliente.CodigoCliente;
+                        documentoConsultaViewModel.Cliente.NomeCliente = cliente.NomeCliente;
+                    }
+
+                    List<DocumentoItemConsultaViewModel> listaItens = new List<DocumentoItemConsultaViewModel>();
+
+                    foreach (var item in documento.DocumentoItens)
+                    {
+                        DocumentoItemConsultaViewModel itemConsulta = new DocumentoItemConsultaViewModel
+                        {
+                            IdDocumento = (int)item.IdDocumento,
+                            QuantidadeProduto = item.QuantidadeProduto,
+                            ValorUnitarioItem = item.ValorUnitarioItem,
+                            ValorTotalItem = item.ValorTotalItem
+                        };
+
+                        Produto? produto = _context.Produto.Find(item.IdProduto);
+
+                        if (produto != null)
+                        {
+                            itemConsulta.Produto.IdProduto = (int)produto.IdProduto;
+                            itemConsulta.Produto.CodigoProduto = produto.CodigoProduto;
+                            itemConsulta.Produto.DescricaoProduto = produto.DescricaoProduto;
+                        }
+
+                        listaItens.Add(itemConsulta);
+                    }
+
+                    documentoConsultaViewModel.Itens = listaItens;
+
+                }
+
+            }
+
+            return View(documentoConsultaViewModel);
+        }
+
         public int GerarNumeroDocumento()
         {
             int numeroDocumento = 1;
@@ -109,7 +172,7 @@ namespace FillGaps.WebVendas.WebApp.Controllers
                     IdCliente = (int)documentoViewModel.IdCliente,
                     ValorTotalDocumento = documentoViewModel.ValorTotalDocumento,
                     DocumentoItens = documentoViewModel.JsonProdutos != null
-                        ? System.Text.Json.JsonSerializer.Deserialize<ICollection<DocumentoItem>>(documentoViewModel.JsonProdutos)
+                        ? JsonConvert.DeserializeObject<ICollection<DocumentoItem>>(documentoViewModel.JsonProdutos) //System.Text.Json.JsonSerializer.Deserialize<ICollection<DocumentoItem>>(documentoViewModel.JsonProdutos)
                         : new List<DocumentoItem>()
 
                 };
@@ -140,8 +203,13 @@ namespace FillGaps.WebVendas.WebApp.Controllers
         public IActionResult Excluir(int id)
         {
             Documento? documento = _context.Documento.Find(id);
-            if (documento != null)
+            List<DocumentoItem>? documentoItem = _context.DocumentoItem.Where(di => di.IdDocumento == id).ToList();
+            if (documento != null && documentoItem != null)
             {
+                foreach (var item in documentoItem)
+                {
+                    _context.DocumentoItem.Remove(item);
+                }
                 _context.Documento.Remove(documento);
                 _context.SaveChanges();
             }
